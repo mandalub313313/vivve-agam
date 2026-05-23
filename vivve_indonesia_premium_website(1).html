@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivve Indonesia — Premium AI Social-Wellness Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter & Playfair Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // Fungsi pengaman untuk memicu konfigurasi Tailwind secara andal tanpa menyebabkan ReferenceError
+        function initTailwind() {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['Inter', 'sans-serif'],
+                                serif: ['Playfair Display', 'serif'],
+                            },
+                            colors: {
+                                brand: {
+                                    50: '#FFF5F6',
+                                    100: '#FFEBEF',
+                                    200: '#FFD1DC',
+                                    300: '#F4A7B9',
+                                    400: '#E87A90',
+                                    500: '#D05A6F',
+                                    600: '#9B3E50',
+                                    700: '#732C3A',
+                                    800: '#4C1B25',
+                                    950: '#230B10',
+                                },
+                                wellness: {
+                                    bg: '#FCFAF9',
+                                    card: '#FFFFFF',
+                                    text: '#1C1616',
+                                }
+                            },
+                            animation: {
+                                'float': 'float 6s ease-in-out infinite',
+                                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                            },
+                            keyframes: {
+                                float: {
+                                    '0%, 100%': { transform: 'translateY(0px)' },
+                                    '50%': { transform: 'translateY(-10px)' },
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+        }
+        
+        // Jalankan langsung jika script CDN sudah langsung siap
+        initTailwind();
+        
+        // Daftarkan ke event listener sebagai cadangan pelindung race-condition
+        document.addEventListener('DOMContentLoaded', initTailwind);
+        window.addEventListener('load', initTailwind);
+    </script>
+    <style>
+        .premium-blur {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .glow-cursor {
+            pointer-events: none;
+            background: radial-gradient(400px circle at var(--x) var(--y), rgba(244, 167, 185, 0.15), transparent 80%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(232, 122, 144, 0.2);
+            border-radius: 99px;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #1C1616 30%, #E87A90 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-[#FCF9F9] text-wellness-text font-sans selection:bg-brand-200 selection:text-brand-800 overflow-x-hidden relative custom-scrollbar">
+
+    <!-- Cursor Glow Effect Background -->
+    <div id="glow-container" class="fixed inset-0 z-30 glow-cursor pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- Background Gradient Blurs & Delicate Grid Pattern -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#E87A9008_1px,transparent_1px),linear-gradient(to_bottom,#E87A9008_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none z-0"></div>
+    <div class="absolute top-[5%] left-[-10%] w-[500px] h-[500px] rounded-full bg-brand-100/40 blur-[130px] pointer-events-none z-0"></div>
+    <div class="absolute top-[35%] right-[-10%] w-[600px] h-[600px] rounded-full bg-brand-200/20 blur-[150px] pointer-events-none z-0"></div>
+    <div class="absolute top-[70%] left-[15%] w-[500px] h-[500px] rounded-full bg-brand-100/30 blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-box" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-500 ease-out pointer-events-none">
+        <div class="bg-wellness-text text-white px-5 py-3.5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.15)] flex items-center gap-3 border border-white/10">
+            <div class="w-2 h-2 rounded-full bg-brand-300 animate-ping"></div>
+            <span id="toast-message" class="text-sm font-medium">Notifikasi</span>
+        </div>
+    </div>
+
+    <!-- Premium Sticky Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-40 transition-all duration-300 py-6 border-b border-transparent">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-400 to-brand-300 flex items-center justify-center shadow-md shadow-brand-200/50 group-hover:scale-105 transition-transform duration-300">
+                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl tracking-tight text-wellness-text">Vivve</span>
+                    <span class="text-[9px] font-semibold tracking-widest text-brand-500 uppercase">Indonesia</span>
+                </div>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-600">
+                <a href="#about" class="hover:text-brand-500 transition-colors">Tiga Pilar</a>
+                <a href="#ai-calibration" class="hover:text-brand-500 transition-colors">AI Kalibrasi</a>
+                <a href="#community" class="hover:text-brand-500 transition-colors">Vibe-Tribe</a>
+                <a href="#pricing" class="hover:text-brand-500 transition-colors">Keanggotaan</a>
+                <a href="#faq" class="hover:text-brand-500 transition-colors">FAQ</a>
+            </div>
+
+            <!-- Desktop Action with Profile Icon -->
+            <div class="hidden lg:flex items-center gap-6">
+                <button onclick="openConsultation()" class="text-sm font-semibold text-gray-700 hover:text-brand-500 transition-colors">
+                    Hubungi Konsultan
+                </button>
+                <button onclick="scrollToSection('ai-calibration')" class="bg-wellness-text text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brand-600 hover:shadow-lg hover:shadow-brand-100 transition-all duration-300">
+                    Mulai Kalibrasi AI
+                </button>
+                
+                <!-- Profile Option / Sign Up -->
+                <div class="relative">
+                    <button id="profile-menu-btn" onclick="toggleProfileDropdown()" class="w-10 h-10 rounded-full border-2 border-brand-200 overflow-hidden shadow-sm hover:border-brand-400 transition-all focus:outline-none flex items-center justify-center bg-brand-50 text-brand-600">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div id="profile-dropdown" class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-brand-100 p-4 opacity-0 pointer-events-none transition-all duration-200 z-50">
+                        <p class="text-xs text-gray-400 font-semibold mb-2">Selamat Datang di Vivve</p>
+                        <hr class="border-brand-50 mb-3" />
+                        <button onclick="showAuthModal('login')" class="w-full text-left py-2 text-sm text-wellness-text font-medium hover:text-brand-500 transition-colors">Masuk Akun</button>
+                        <button onclick="showAuthModal('signup')" class="w-full text-left py-2 text-sm text-wellness-text font-medium hover:text-brand-500 transition-colors">Daftar Member Baru</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu button -->
+            <div class="flex items-center gap-3 lg:hidden">
+                <button onclick="toggleProfileDropdown()" class="w-8 h-8 rounded-full border border-brand-200 overflow-hidden flex items-center justify-center bg-brand-50 text-brand-600">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                </button>
+                <button id="mobile-toggle" class="p-2 text-gray-700 hover:text-brand-500 focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute right-0 top-0 bottom-0 w-[280px] bg-[#FCF9F9] p-6 shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300">
+            <div>
+                <div class="flex justify-between items-center mb-10">
+                    <span class="font-bold text-lg text-brand-600">Navigasi Vivve</span>
+                    <button id="mobile-close" class="p-1 hover:text-brand-500">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-6 font-medium text-gray-700">
+                    <a href="#about" class="hover:text-brand-500" onclick="closeMobileDrawer()">Tiga Pilar</a>
+                    <a href="#ai-calibration" class="hover:text-brand-500" onclick="closeMobileDrawer()">AI Kalibrasi</a>
+                    <a href="#community" class="hover:text-brand-500" onclick="closeMobileDrawer()">Vibe-Tribe</a>
+                    <a href="#pricing" class="hover:text-brand-500" onclick="closeMobileDrawer()">Keanggotaan</a>
+                    <a href="#faq" class="hover:text-brand-500" onclick="closeMobileDrawer()">FAQ</a>
+                </div>
+            </div>
+            <div class="flex flex-col gap-3">
+                <button onclick="openConsultation(); closeMobileDrawer()" class="border border-brand-200 text-brand-600 font-semibold py-3 rounded-xl hover:bg-brand-50">
+                    Konsultasi Gratis
+                </button>
+                <button onclick="scrollToSection('ai-calibration'); closeMobileDrawer()" class="bg-wellness-text text-white font-semibold py-3 rounded-xl">
+                    Mulai Kalibrasi AI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREMIUM HERO SECTION -->
+    <header class="relative pt-36 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden z-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            
+            <!-- Hero Typography -->
+            <div class="lg:col-span-7 flex flex-col gap-8 text-left">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-wellness-text leading-[1.08] text-gradient">
+                    Wellness Meets <br>
+                    <span class="font-serif italic font-normal text-brand-500">Community.</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl">
+                    Vivve Indonesia adalah <span class="font-medium text-wellness-text">Social-Wellness Startup</span> pertama yang menyelaraskan kurasi nutrisi harian berbasis kecerdasan buatan (High-Tech) dengan ekosistem komunitas aktif & prestisius (High-Touch).
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <button onclick="scrollToSection('ai-calibration')" class="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-brand-200 transition-all duration-300 flex items-center justify-center gap-2.5 group">
+                        Mulai Kalibrasi AI
+                        <i data-lucide="sparkles" class="w-4 h-4 group-hover:rotate-12 transition-transform"></i>
+                    </button>
+                    <button onclick="openConsultation()" class="w-full sm:w-auto bg-white border border-brand-200 text-wellness-text font-semibold px-8 py-4 rounded-full hover:bg-brand-50 transition-all duration-300 flex items-center justify-center gap-2.5">
+                        <i data-lucide="phone-call" class="w-4 h-4 text-brand-400"></i>
+                        Konsultasi WA Gratis
+                    </button>
+                </div>
+
+                <!-- Trusted/Fast Stats -->
+                <div class="grid grid-cols-3 gap-6 pt-6 border-t border-brand-200/40">
+                    <div>
+                        <span class="block text-3xl font-bold text-brand-600 font-serif">1200+</span>
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Aktif Member</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-bold text-brand-600 font-serif">15+</span>
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Mitra Terkurasi</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-bold text-brand-600 font-serif">24/7</span>
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">AI Nutritionist</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Interactive Mockup with Aesthetic Image -->
+            <div class="lg:col-span-5 relative">
+                <div class="absolute -inset-4 bg-gradient-to-tr from-brand-300 to-transparent rounded-[40px] blur-2xl opacity-20 pointer-events-none animate-pulse-slow"></div>
+                
+                <!-- Main Dashboard Mockup -->
+                <div class="relative bg-white/80 border border-white/95 rounded-[32px] p-6 shadow-2xl premium-blur animate-float">
+                    
+                    <!-- Decorative image banner -->
+                    <div class="w-full h-32 rounded-2xl overflow-hidden relative mb-5 bg-brand-100">
+                        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" alt="Yoga Session" class="w-full h-full object-cover mix-blend-multiply opacity-85">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-white text-xs font-bold tracking-wider">Vibe-Tribe Sunday Yoga</span>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex gap-2">
+                            <span class="w-3 h-3 rounded-full bg-brand-200"></span>
+                            <span class="w-3 h-3 rounded-full bg-brand-100"></span>
+                        </div>
+                        <div class="bg-brand-50 text-[10px] font-bold text-brand-500 px-3 py-1 rounded-full uppercase tracking-widest">
+                            Vivve Engine v1.1
+                        </div>
+                    </div>
+
+                    <!-- Interactive Calorie & Food Finder Card preview -->
+                    <div class="bg-gradient-to-b from-[#FFFBFB] to-[#FFF5F6] border border-brand-100 rounded-2xl p-5 mb-4 relative">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-brand-100 rounded-xl text-brand-500">
+                                <i data-lucide="utensils" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">The Brain • Menu Hari Ini</span>
+                                <h4 id="hero-food-name" class="font-bold text-base text-wellness-text mt-0.5">Salmon Mentai Clean Prep</h4>
+                                <div id="hero-food-meta" class="flex items-center gap-3 mt-2 text-xs font-medium text-gray-500">
+                                    <span class="flex items-center gap-1"><i data-lucide="flame" class="w-3.5 h-3.5 text-brand-400"></i> 420 Kcal</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-400"></i> Surabaya Pusat</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Food Recommendations List Popover -->
+                        <div id="rekomendasi-popover" class="absolute left-4 right-4 top-24 bg-white border border-brand-200 rounded-xl p-4 shadow-xl opacity-0 pointer-events-none transition-all duration-200 z-30">
+                            <h5 class="text-xs font-bold text-brand-600 uppercase mb-2">Pilihan Menu Rekomendasi</h5>
+                            <div class="space-y-2 max-h-36 overflow-y-auto custom-scrollbar">
+                                <div onclick="selectRecommendedFood(0)" class="p-2 hover:bg-brand-50 rounded-lg cursor-pointer text-xs font-medium text-wellness-text flex justify-between">
+                                    <span>Salmon Mentai Clean Prep</span><span class="text-brand-500">420 Kcal</span>
+                                </div>
+                                <div onclick="selectRecommendedFood(1)" class="p-2 hover:bg-brand-50 rounded-lg cursor-pointer text-xs font-medium text-wellness-text flex justify-between">
+                                    <span>Smashed Avocado Chicken Rice</span><span class="text-brand-500">450 Kcal</span>
+                                </div>
+                                <div onclick="selectRecommendedFood(2)" class="p-2 hover:bg-brand-50 rounded-lg cursor-pointer text-xs font-medium text-wellness-text flex justify-between">
+                                    <span>Tenderloin Beetroot Salad</span><span class="text-brand-500">380 Kcal</span>
+                                </div>
+                                <div onclick="selectRecommendedFood(3)" class="p-2 hover:bg-brand-50 rounded-lg cursor-pointer text-xs font-medium text-wellness-text flex justify-between">
+                                    <span>Tempeh Almond Nut Blend Bowl</span><span class="text-brand-500">340 Kcal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="openRekomendasiPopover()" class="flex-1 bg-white border border-brand-200 text-xs font-semibold py-2 rounded-xl hover:bg-brand-50 transition-all text-wellness-text flex items-center justify-center gap-1">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i> Rekomendasi Lain
+                            </button>
+                            <button onclick="openCheckoutModal()" class="flex-1 bg-brand-400 text-white text-xs font-semibold py-2 rounded-xl hover:bg-brand-500 transition-all">
+                                Pesan Sekarang
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-4 border border-brand-100 shadow-sm flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-brand-50 text-brand-500 rounded-xl">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-bold text-wellness-text">Vibe-Tribe Fun Run</h5>
+                                <p class="text-[10px] text-gray-400">Sabtu, Jl. Tunjungan Surabaya</p>
+                            </div>
+                        </div>
+                        <button onclick="showJoinEventModal('Vibe-Tribe Fun Run')" class="bg-wellness-text text-white text-[10px] font-bold px-3 py-2 rounded-lg hover:bg-brand-600 transition-colors">
+                            RSVP Ikut
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Floating AI indicator -->
+                <div class="absolute -top-6 -right-6 bg-white border border-brand-100 p-3 rounded-2xl shadow-lg flex items-center gap-2 animate-bounce" style="animation-duration: 4s;">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span id="ai-status" class="text-xs font-semibold text-wellness-text font-mono">AI Active</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- PILAR UTAMA (ABOUT VIVVE BENTO) -->
+    <section id="about" class="py-24 bg-[#FFFBFB] border-y border-brand-100/40 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-100 px-3.5 py-1.5 rounded-full">Sinergi High-Tech & High-Touch</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-wellness-text mt-6 mb-4">
+                    Tiga Pilar Utama Vivve Indonesia
+                </h2>
+                <p class="text-gray-500 text-lg">
+                    Klik pilar kami untuk mempelajari menu khusus, layanan, dan bentuk aktivitas riil kami.
+                </p>
+            </div>
+
+            <!-- Bento Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- The Brain Card -->
+                <div onclick="openPillarDetail('brain')" class="md:col-span-2 bg-white rounded-[32px] border border-brand-100 p-8 md:p-10 flex flex-col justify-between hover:shadow-2xl hover:shadow-brand-100/50 transition-all duration-500 group relative overflow-hidden cursor-pointer">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-brand-50 rounded-full blur-3xl pointer-events-none group-hover:bg-brand-100/50 transition-all duration-500"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center mb-8 text-brand-500 group-hover:scale-110 transition-transform">
+                            <i data-lucide="cpu" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-wellness-text mb-4">The Brain (Digital Health)</h3>
+                        <p class="text-gray-500 leading-relaxed max-w-xl">
+                            Arsitek gaya hidup invisible di balik layar. Dengan kecerdasan buatan, Vivve mengurasi kebutuhan nutrisi harian dan memetakan menu makan siang / katering terbaik dari vendor terdekat Anda. Menghilangkan mental lelah memilih makan harian (<span class="text-brand-500 font-medium">Anti Decision Fatigue</span>).
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-brand-100 flex items-center justify-between relative z-10">
+                        <div class="flex gap-4">
+                            <span class="text-xs font-semibold text-brand-500 bg-brand-50 px-3 py-1 rounded-lg">AI Calibration</span>
+                            <span class="text-xs font-semibold text-brand-500 bg-brand-50 px-3 py-1 rounded-lg">Meal Tracking</span>
+                        </div>
+                        <span class="text-sm font-bold text-brand-500 flex items-center gap-1.5">
+                            Lihat Menu & Layanan <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- The Soul Card -->
+                <div onclick="openPillarDetail('soul')" class="bg-white rounded-[32px] border border-brand-100 p-8 flex flex-col justify-between hover:shadow-2xl hover:shadow-brand-100/50 transition-all duration-500 group cursor-pointer">
+                    <div>
+                        <div class="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center mb-8 text-brand-500 group-hover:scale-110 transition-transform">
+                            <i data-lucide="heart" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-wellness-text mb-4">The Soul (Vibe-Tribe)</h3>
+                        <p class="text-gray-500 leading-relaxed">
+                            Membangun ikatan emosional dan prestise sosial. Kami mengubah rutinitas olahraga yang membosankan menjadi petualangan sosial eksklusif seperti Saturday Fun Run, Yoga in the Park, dan Wellness Networking.
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-brand-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-brand-500 uppercase tracking-widest">Active Community Hub</span>
+                        <span class="text-xs font-bold text-brand-500 flex items-center gap-1">Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></span>
+                    </div>
+                </div>
+
+                <!-- The Ecosystem Card -->
+                <div onclick="openPillarDetail('ecosystem')" class="bg-white rounded-[32px] border border-brand-100 p-8 flex flex-col justify-between hover:shadow-2xl hover:shadow-brand-100/50 transition-all duration-500 group cursor-pointer">
+                    <div>
+                        <div class="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center mb-8 text-brand-500 group-hover:scale-110 transition-transform">
+                            <i data-lucide="tag" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-wellness-text mb-4">The Ecosystem</h3>
+                        <p class="text-gray-500 leading-relaxed">
+                            Menciptakan nilai penghematan yang luar biasa. Anggota mendapatkan potongan harga khusus flat (hingga 15%) di berbagai vendor mitra terkurasi seperti katering sehat, studio gym, dan suplemen premium.
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-8 border-t border-brand-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-brand-500 uppercase tracking-widest">High Switching Cost Benefit</span>
+                        <span class="text-xs font-bold text-brand-500 flex items-center gap-1">Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></span>
+                    </div>
+                </div>
+
+                <!-- Value Proposition Banner Card -->
+                <div class="md:col-span-2 bg-[#1C1616] rounded-[32px] p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 justify-between hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-brand-950 to-transparent pointer-events-none"></div>
+                    
+                    <div class="relative z-10 flex-1">
+                        <span class="text-xs font-bold text-brand-300 uppercase tracking-wider">Asset-Light Innovation</span>
+                        <h4 class="text-2xl md:text-3xl font-bold text-white mt-2 mb-4">Mendefinisikan Ulang Makna Sehat bagi Profesional Urban</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed max-w-lg">
+                            Jika dulu kemewahan identik dengan konsumsi berlebih, kini tubuh bugar, pikiran tenang, dan waktu produktif adalah lambang status sosial yang baru.
+                        </p>
+                    </div>
+
+                    <button onclick="scrollToSection('pricing')" class="relative z-10 w-full md:w-auto bg-white hover:bg-brand-100 text-wellness-text font-bold px-8 py-4 rounded-2xl transition-all whitespace-nowrap">
+                        Lihat Hak Eksklusif
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- LIVE DETAILED AI WELLNESS CALIBRATION SURVEY SECTION -->
+    <section id="ai-calibration" class="py-24 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto bg-white rounded-[40px] border border-brand-200/60 p-8 md:p-12 shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="text-center mb-10">
+                <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center text-brand-500 mx-auto mb-4">
+                    <i data-lucide="sparkles" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-wellness-text">AI Wellness Calibration Survey</h3>
+                <p class="text-gray-500 text-sm mt-2">Ukur indeks kebugaran, burnout, & asupan nutrisi Anda dengan algoritma komparatif Vivve.</p>
+                
+                <!-- Progress bar -->
+                <div class="w-full bg-brand-100/30 h-1.5 rounded-full mt-6 overflow-hidden">
+                    <div id="survey-progress-bar" class="bg-gradient-to-r from-brand-300 to-brand-500 h-full w-[9%] transition-all duration-300"></div>
+                </div>
+                <p class="text-[10px] text-brand-500 font-bold uppercase tracking-widest mt-2" id="survey-step-indicator">Bagian 1 dari 11: Profil Dasar</p>
+            </div>
+
+            <!-- Survey Steps -->
+            <div class="relative min-h-[380px] flex flex-col justify-between">
+                
+                <form id="wellness-survey-form" onsubmit="generateAIResults(event)" class="space-y-6">
+                    
+                    <!-- SECTION 1: BASIC PROFILE -->
+                    <div id="step-sec-1" class="survey-form-section space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">1. Nama Lengkap</label>
+                                <input id="sv-fullname" type="text" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">2. Nama Panggilan</label>
+                                <input id="sv-nickname" type="text" placeholder="Nama panggilan" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">3. Usia</label>
+                                <input id="sv-age" type="number" placeholder="25" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">4. Jenis Kelamin</label>
+                                <select id="sv-gender" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Pria">Pria</option>
+                                    <option value="Wanita">Wanita</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">5. Kota Domisili</label>
+                                <input id="sv-city" type="text" placeholder="Surabaya" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">6. Pekerjaan / Aktivitas Utama</label>
+                                <input id="sv-job" type="text" placeholder="BD Specialist" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">7. Status Aktivitas</label>
+                                <select id="sv-status" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Mahasiswa">Mahasiswa</option>
+                                    <option value="Pekerja">Pekerja</option>
+                                    <option value="Entrepreneur">Entrepreneur</option>
+                                    <option value="Freelancer">Freelancer</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">8. Jam kerja harian rata-rata</label>
+                                <select id="sv-workhours" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="< 6 jam">&lt; 6 jam</option>
+                                    <option value="6-8 jam">6–8 jam</option>
+                                    <option value="8-10 jam">8–10 jam</option>
+                                    <option value="> 10 jam">&gt; 10 jam</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">9. Apakah pekerjaanmu lebih banyak</label>
+                                <select id="sv-worktype" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Duduk">Duduk</option>
+                                    <option value="Berdiri">Berdiri</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="Campuran">Campuran</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: HEALTH GOALS -->
+                    <div id="step-sec-2" class="survey-form-section hidden space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-3">Apa tujuan utama kamu join Vivve? (Pilih maksimal 3)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {["Menurunkan berat badan", "Menambah massa otot", "Hidup lebih sehat", "Meningkatkan energi harian", "Menjaga pola makan", "Konsisten olahraga", "Mengurangi stress", "Memiliki komunitas sehat", "Networking", "Tidur lebih baik", "Menambah produktivitas", "Menjaga kesehatan jangka panjang"].map(goal => `
+                                    <label class="flex items-center gap-2.5 p-3 rounded-xl border border-brand-100 bg-brand-50/10 cursor-pointer hover:bg-brand-50/35 transition-colors">
+                                        <input type="checkbox" name="goals" value="${goal}" class="rounded border-brand-300 text-brand-500 focus:ring-brand-400">
+                                        <span class="text-xs text-wellness-text font-medium">${goal}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <hr class="border-brand-50 my-6" />
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dalam skala 1–10:</h4>
+                        <div class="space-y-4">
+                            {[
+                                { id: "sat-health", label: "Seberapa puas kamu dengan kondisi kesehatanmu saat ini?" },
+                                { id: "sat-consistency", label: "Seberapa konsisten pola hidup sehatmu?" },
+                                { id: "sat-stress", label: "Seberapa tinggi tingkat stress harianmu?" },
+                                { id: "sat-motivation", label: "Seberapa besar motivasimu untuk berubah?" }
+                            ].map(item => `
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                                        <span>${item.label}</span>
+                                        <span id="${item.id}-val" class="font-bold text-brand-500">5</span>
+                                    </div>
+                                    <input type="range" id="${item.id}" min="1" max="10" value="5" oninput="document.getElementById('${item.id}-val').innerText = this.value" class="w-full accent-brand-500">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: DAILY LIFESTYLE -->
+                    <div id="step-sec-3" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">1. Jam Bangun Tidur</label>
+                                <input id="sv-wake-time" type="text" placeholder="05:30 WIB" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">2. Jam Tidur Malam</label>
+                                <input id="sv-sleep-time" type="text" placeholder="23:00 WIB" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">3. Durasi Tidur (Jam)</label>
+                                <input id="sv-sleep-duration" type="number" placeholder="6" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">4. Seberapa Sering Begadang?</label>
+                                <select id="sv-up-late" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Jarang">Jarang / Tidak Pernah</option>
+                                    <option value="Kadang-kadang">Kadang-kadang</option>
+                                    <option value="Sering">Sering</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">5. Sering Skip Sarapan?</label>
+                                <select id="sv-skip-breakfast" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Ya">Ya</option>
+                                    <option value="Tidak">Tidak</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">6. Jumlah Makan Besar Rata-rata</label>
+                                <input id="sv-meals-count" type="number" placeholder="3" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                        </div>
+                        <hr class="border-brand-50" />
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-3">Seberapa sering konsumsi berikut ini?</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                                {["Fast Food", "Gorengan", "Minuman Manis", "Kopi", "Alkohol"].map((item, idx) => `
+                                    <div class="p-3 bg-brand-50/10 border border-brand-100 rounded-xl text-center">
+                                        <span class="block text-[11px] font-bold text-gray-600 mb-2">${item}</span>
+                                        <select class="sv-consumables w-full text-xs p-1.5 rounded-lg border border-brand-100 bg-white">
+                                            <option value="Jarang">Jarang</option>
+                                            <option value="Kadang-kadang">Kadang</option>
+                                            <option value="Sering">Sering</option>
+                                        </select>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Aktivitas Fisik Mingguan</label>
+                                <select id="sv-physical-activity" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Tidak Pernah">Tidak Pernah</option>
+                                    <option value="1-2x">1-2x per minggu</option>
+                                    <option value="3-4x">3-4x per minggu</option>
+                                    <option value="5x+">5x+ per minggu</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Jenis Olahraga Favorit</label>
+                                <select id="sv-sports-fav" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Running">Running</option>
+                                    <option value="Gym">Gym</option>
+                                    <option value="Badminton">Badminton</option>
+                                    <option value="Cycling">Cycling</option>
+                                    <option value="Yoga">Yoga</option>
+                                    <option value="Home workout">Home Workout</option>
+                                    <option value="Tidak Ada">Tidak Ada Olahraga</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: NUTRITION & FOOD MAPPING -->
+                    <div id="step-sec-4" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Apa kendala terbesar pola makan sehat?</label>
+                                <select id="sv-diet-barrier" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Bingung pilih makanan">Bingung pilih makanan sehat</option>
+                                    <option value="Tidak punya waktu">Tidak sempat / sibuk</option>
+                                    <option value="Mahal">Bahan makanan sehat mahal</option>
+                                    <option value="Sulit konsisten">Sulit menjaga konsistensi harian</option>
+                                    <option value="Sering craving">Sering ngidam manis / asin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Preferensi Makanan</label>
+                                <select id="sv-food-preference" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Clean Eating">Clean Eating</option>
+                                    <option value="High Protein">High Protein (Massa Otot)</option>
+                                    <option value="Low Carb">Low Carb (Bakar Lemak)</option>
+                                    <option value="Vegetarian/Vegan">Vegetarian / Vegan</option>
+                                    <option value="Flexible">Flexible Eating</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Apakah kamu memiliki Alergi / Pantangan / Riwayat Penyakit?</label>
+                            <input id="sv-medical-restrictions" type="text" placeholder="Tulis alergi udang, diabetes, asam lambung, atau kosongkan jika tidak ada" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Budget Makan Harian</label>
+                                <select id="sv-daily-budget" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="<25k">&lt; Rp25.000</option>
+                                    <option value="25-50k">Rp25.000 – Rp50.000</option>
+                                    <option value="50-100k">Rp50.000 – Rp100.000</option>
+                                    <option value="100k+">Rp100.000+</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Aplikasi Delivery Sering Digunakan</label>
+                                <select id="sv-delivery-apps" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="GoFood">GoFood</option>
+                                    <option value="GrabFood">GrabFood</option>
+                                    <option value="ShopeeFood">ShopeeFood</option>
+                                    <option value="Tidak Pernah">Jarang / Tidak Pernah</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: WELLNESS & MENTAL ENERGY -->
+                    <div id="step-sec-5" class="survey-form-section hidden space-y-4">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Dalam 30 hari terakhir:</h4>
+                        <div class="space-y-4">
+                            {[
+                                { id: "men-burnout", q: "Seberapa sering merasa burnout?" },
+                                { id: "men-fatigue", q: "Seberapa sering merasa kelelahan?" },
+                                { id: "men-motivation", q: "Seberapa sering kehilangan motivasi?" },
+                                { id: "men-loneliness", q: "Seberapa sering merasa kesepian?" },
+                                { id: "men-overthinking", q: "Seberapa sering overthinking?" }
+                            ].map(item => `
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-brand-50/10 border border-brand-100 rounded-xl gap-2">
+                                    <span class="text-xs font-semibold text-gray-700">${item.q}</span>
+                                    <select class="sv-mental-scales w-full sm:w-auto text-xs p-1.5 border border-brand-100 bg-white rounded-lg">
+                                        <option value="1">Tidak Pernah</option>
+                                        <option value="2">Jarang</option>
+                                        <option value="3">Kadang-kadang</option>
+                                        <option value="4">Sering</option>
+                                        <option value="5">Sangat Sering</option>
+                                    </select>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Apa yang paling menguras energi kamu?</label>
+                            <select id="sv-energy-drain" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option value="Pekerjaan">Tuntutan Pekerjaan</option>
+                                <option value="Kuliah">Tugas Kuliah / Akademis</option>
+                                <option value="Relasi sosial">Relasi Sosial / Lingkungan</option>
+                                <option value="Finansial">Kondisi Finansial</option>
+                                <option value="Kurang tidur">Kurang Istirahat / Pola Tidur</option>
+                                <option value="Tidak punya support system">Tidak memiliki Support System</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 6: SOCIAL & COMMUNITY -->
+                    <div id="step-sec-6" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Kamu lebih nyaman olahraga:</label>
+                                <select id="sv-exercise-comfort" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Olahraga sendiri">Olahraga Sendiri</option>
+                                    <option value="Dengan teman">Bersama Teman Dekat</option>
+                                    <option value="Dalam komunitas kecil">Dalam Komunitas Kecil</option>
+                                    <option value="Dalam komunitas besar">Dalam Komunitas Skala Besar</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Alasan tertarik join komunitas wellness:</label>
+                                <select id="sv-community-reason" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Cari motivasi">Mencari Motivasi Eksternal</option>
+                                    <option value="Cari teman baru">Mendapat Teman Baru</option>
+                                    <option value="Networking">Membangun Networking Profesional</option>
+                                    <option value="Biar lebih konsisten">Supaya Lebih Konsisten Olahraga</option>
+                                    <option value="Cari lingkungan positif">Mencari Lingkungan yang Positif</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Aktivitas komunitas yang paling menarik bagi Anda:</label>
+                            <select id="sv-community-act" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option value="Fun Run">Fun Run di Akhir Pekan</option>
+                                <option value="Wellness Networking">Wellness Networking Lounge</option>
+                                <option value="Sunday Yoga">Sunday Yoga in the Park</option>
+                                <option value="Healthy Brunch">Healthy Brunch & Coffee talk</option>
+                                <option value="Gym Session">Gym Session Berkelompok</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 7: PRODUCTIVITY & WORK-LIFE BALANCE -->
+                    <div id="step-sec-7" class="survey-form-section hidden space-y-4">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Dalam skala 1–10:</h4>
+                        <div class="space-y-4">
+                            {[
+                                { id: "prod-score", label: "Bagaimana produktivitas harianmu?" },
+                                { id: "energy-score", label: "Berapa tingkat energy level harianmu?" },
+                                { id: "focus-score", label: "Tingkat fokus saat kerja / kuliah?" },
+                                { id: "wlb-score", label: "Keseimbangan Work-life balance Anda?" },
+                                { id: "mood-score", label: "Kondisi mood harian Anda secara umum?" }
+                            ].map(item => `
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                                        <span>${item.label}</span>
+                                        <span id="${item.id}-val" class="font-bold text-brand-500">5</span>
+                                    </div>
+                                    <input type="range" id="${item.id}" min="1" max="10" value="5" oninput="document.getElementById('${item.id}-val').innerText = this.value" class="w-full accent-brand-500">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Apa yang paling sering mengganggu produktivitasmu?</label>
+                            <select id="sv-prod-distraction" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option value="Kurang tidur">Kurang Jam Tidur / Istirahat</option>
+                                <option value="Burnout">Mental Burnout & Penat</option>
+                                <option value="Pola makan buruk">Pola Makan yang Buruk / Kurang Nutrisi</option>
+                                <option value="Kurang olahraga">Tubuh Kurang Bergerak / Jarang Olahraga</option>
+                                <option value="Stress">Beban Stress Berlebihan</option>
+                                <option value="Distraksi digital">Distraksi Digital / Sosmed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 8: DIGITAL HABITS -->
+                    <div id="step-sec-8" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Berapa lama screen time harianmu?</label>
+                                <select id="sv-screentime" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="<3 jam">&lt; 3 jam per hari</option>
+                                    <option value="3-5 jam">3–5 jam per hari</option>
+                                    <option value="5-8 jam">5–8 jam per hari</option>
+                                    <option value="8 jam+">8 jam+ per hari</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Platform yang paling sering digunakan:</label>
+                                <select id="sv-social-fav" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="TikTok">TikTok</option>
+                                    <option value="LinkedIn">LinkedIn</option>
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="X">X (Twitter)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Jenis konten wellness favorit:</label>
+                            <select id="sv-wellness-content" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option value="Nutrition">Informasi Nutrisi & Diet</option>
+                                <option value="Fitness">Latihan Fisik & Fitness</option>
+                                <option value="Productivity">Manajemen Produktivitas & Waktu</option>
+                                <option value="Self improvement">Self Improvement & Karir</option>
+                                <option value="Mental health">Kesehatan Mental & Relaksasi</option>
+                                <option value="Lifestyle aesthetic">Gaya Hidup Aesthetic & Wellness</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 9: MEMBERSHIP PREFERENCE -->
+                    <div id="step-sec-9" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Kamu lebih tertarik pada:</label>
+                                <select id="sv-member-type-pref" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Digital-only wellness">Digital-only Wellness (Aplikasi & Edukasi)</option>
+                                    <option value="Community-only">Community-only (Hanya Event Offline)</option>
+                                    <option value="Hybrid">Hybrid (Digital + Acara Komunitas)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Benefit yang paling kamu cari:</label>
+                                <select id="sv-benefit-pref" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Personalized wellness">Personalized Wellness (Meal Plan & Jadwal Olahraga)</option>
+                                    <option value="Accountability system">Sistem Akuntabilitas (Pendampingan Rutin)</option>
+                                    <option value="Networking">Networking Lingkaran Sosial Eksklusif</option>
+                                    <option value="Partner discounts">Diskon flat di Vendor Mitra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Apakah bersedia join membership Vivve?</label>
+                            <select id="sv-join-willingness" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option value="Ya">Ya, bersedia bergabung langsung</option>
+                                <option value="Mungkin">Mungkin, ingin mencoba trial dulu</option>
+                                <option value="Masih lihat-lihat">Masih lihat-lihat lebih detail</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 10: AI CALIBRATION (CORE) -->
+                    <div id="step-sec-10" class="survey-form-section hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Saat sibuk, kamu biasanya:</label>
+                                <select id="sv-busy-habit" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Skip makan">Melewatkan waktu makan (Skip)</option>
+                                    <option value="Makan asal">Makan asal-asalan / Fast food</option>
+                                    <option value="Tetap teratur">Tetap berupaya makan teratur</option>
+                                    <option value="Overeating">Mengalami overeating karena lapar</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Saat stress, kamu cenderung:</label>
+                                <select id="sv-stress-habit" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Makan banyak">Makan banyak / Ngemil manis</option>
+                                    <option value="Tidak nafsu makan">Kehilangan nafsu makan harian</option>
+                                    <option value="Tidur">Tidur berlebihan</option>
+                                    <option value="Scroll social media">Scroll media sosial berjam-jam</option>
+                                    <option value="Olahraga">Olahraga meluapkan emosi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tipe motivasi kamu:</label>
+                                <select id="sv-motivation-type" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Butuh komunitas">Butuh Komunitas & Pertemanan</option>
+                                    <option value="Butuh challenge">Butuh Tantangan / Target yang seru</option>
+                                    <option value="Butuh reminder">Butuh Reminder & Notifikasi rutin</option>
+                                    <option value="Butuh target jelas">Butuh Target yang terukur & detail</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Gaya hidup ideal menurutmu:</label>
+                                <select id="sv-ideal-lifestyle" class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                    <option value="Healthy & productive">Sangat Sehat & Produktif</option>
+                                    <option value="Calm & balanced">Tenang, Rileks & Seimbang</option>
+                                    <option value="Active & social">Aktif & Senang Bersosialisasi</option>
+                                    <option value="Premium wellness lifestyle">Premium Wellness Lifestyle</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FINAL SECTION (ESSAYS) -->
+                    <div id="step-sec-11" class="survey-form-section hidden space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">1. Apa alasan terbesar kamu ingin hidup lebih sehat sekarang?</label>
+                            <textarea id="sv-essay-reason" required placeholder="Tuliskan alasan terdalam Anda..." class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text h-20 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">2. Kalau Vivve bisa membantu satu hal dalam hidupmu, apa itu?</label>
+                            <textarea id="sv-essay-help" required placeholder="Tuliskan tantangan terbesar Anda..." class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text h-20 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">3. Apa ekspektasimu terhadap Vivve?</label>
+                            <textarea id="sv-essay-expect" required placeholder="Ekspektasi Anda terhadap layanan kami..." class="w-full px-4 py-3 rounded-xl bg-brand-50/30 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text h-20 resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="flex items-center justify-between pt-6 border-t border-brand-50">
+                        <button type="button" id="survey-prev-btn" onclick="navigateSurvey(-1)" class="px-6 py-3 border border-brand-200 text-gray-500 font-semibold rounded-full text-xs hover:bg-brand-50/50 transition-all invisible">
+                            Kembali
+                        </button>
+                        <button type="button" id="survey-next-btn" onclick="navigateSurvey(1)" class="px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-full text-xs transition-all shadow-md">
+                            Lanjut
+                        </button>
+                        <button type="submit" id="survey-submit-btn" class="px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-full text-xs transition-all shadow-md hidden">
+                            Kirim & Kalibrasi AI
+                        </button>
+                    </div>
+
+                </form>
+
+                <!-- Loading screen inside Survey Block -->
+                <div id="survey-form-loading" class="hidden flex-col items-center justify-center py-16">
+                    <div class="relative w-16 h-16 mb-6">
+                        <div class="absolute inset-0 border-4 border-brand-100 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-brand-400 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p class="font-bold text-wellness-text text-base">Vivve AI sedang menghitung blueprints nutrisi...</p>
+                    <p class="text-xs text-gray-400 mt-1">Mengintegrasikan dengan data katering sehat terdekat Surabaya</p>
+                </div>
+
+                <!-- STEP 5: Calibration Results Display -->
+                <div id="survey-form-results" class="hidden space-y-6">
+                    <div class="bg-brand-50 border border-brand-200/50 rounded-2xl p-6">
+                        <h5 class="font-bold text-brand-600 text-base mb-6 flex items-center gap-2">
+                            <i data-lucide="award" class="w-5 h-5"></i> Blueprint Kesehatan Rekomendasi Vivve
+                        </h5>
+                        
+                        <!-- Outputs List Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">1. Wellness Persona</span>
+                                <span id="res-sv-persona" class="text-sm font-bold text-wellness-text">Active Goal Seeker</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">2. Nutrition Mapping</span>
+                                <span id="res-sv-nutrition" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">3. Energy Score</span>
+                                <span id="res-sv-energy" class="text-sm font-bold text-wellness-text">7.5 / 10</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">4. Burnout Risk</span>
+                                <span id="res-sv-burnout" class="text-sm font-bold text-red-500">Kategori Rendah</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">5. Lifestyle Compatibility</span>
+                                <span id="res-sv-compat" class="text-sm font-bold text-wellness-text">92%</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">6. Community Match</span>
+                                <span id="res-sv-community" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">7. Wellness Recommendation</span>
+                                <span id="res-sv-recommendation" class="text-sm font-bold text-wellness-text">Fokus pola tidur teratur</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">8. Personalized Routine</span>
+                                <span id="res-sv-routine" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">9. Event Recommendation</span>
+                                <span id="res-sv-event-rec" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">10. Healthy Food Mapping</span>
+                                <span id="res-sv-food-rec" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">11. Habit Improvement Plan</span>
+                                <span id="res-sv-habit" class="text-sm font-bold text-wellness-text">Mengurangi fastfood secara terstruktur</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                <span class="text-[10px] uppercase font-bold text-brand-400 block mb-1">12. Weekly Wellness Blueprint</span>
+                                <span id="res-sv-weekly" class="text-sm font-bold text-wellness-text">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-3">
+                        <button type="button" onclick="openConsultation()" class="w-full sm:flex-1 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md shadow-brand-200">
+                            Klaim Voucher Diskon Di WhatsApp
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </button>
+                        <button type="button" onclick="resetSurveyForm()" class="w-full sm:w-auto border border-brand-200 text-gray-500 hover:text-wellness-text font-bold px-6 py-3.5 rounded-xl transition-all text-sm">
+                            Ulangi Kalibrasi
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- COMMUNITY EXPERIENCE SECTION (VIBE-TRIBE GALLERY) -->
+    <section id="community" class="py-24 bg-[#FFFBFB] border-t border-brand-100/40 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+                <div>
+                    <span class="text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-100 px-3.5 py-1.5 rounded-full">The Soul Movement</span>
+                    <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-wellness-text mt-6 mb-4">
+                        Mengubah Tugas Sehat <br>Menjadi Kebanggaan Sosial.
+                    </h2>
+                    <p class="text-gray-500 max-w-xl text-lg">
+                        Di Vivve, hidup sehat bukan jalan yang sepi. Kami mengurasi kegiatan wellness bersama lingkaran profesional terkemuka kota besar.
+                    </p>
+                </div>
+                <button onclick="openCalendarModal()" class="bg-wellness-text hover:bg-brand-600 text-white font-semibold px-6 py-3.5 rounded-full shadow-lg transition-all flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>
+                    Lihat Kalender Event
+                </button>
+            </div>
+
+            <!-- Interaktif Event Cards with Premium Imagery -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Event 1 -->
+                <div class="bg-white rounded-[28px] border border-brand-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-52 bg-brand-50 relative overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=600&q=80" alt="Fun Run" class="w-full h-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-brand-500 bg-brand-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Sabtu Rutin</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Tunjungan</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-wellness-text mb-2">Saturday Fun Run</h4>
+                        <p class="text-gray-500 text-sm mb-6">Lari pagi santai dengan checkpoint di kafe lokal untuk sesi diskusi hangat pasca-lari.</p>
+                        <button onclick="showJoinEventModal('Saturday Fun Run')" class="w-full border border-brand-200 text-wellness-text font-bold py-3 rounded-xl group-hover:bg-brand-50 transition-colors">
+                            Ambil Slot RSVP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 2 -->
+                <div class="bg-white rounded-[28px] border border-brand-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-52 bg-brand-50 relative overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Yoga Class" class="w-full h-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-brand-500 bg-brand-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Minggu Pagi</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Taman Kota</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-wellness-text mb-2">Sunday Yoga in the Park</h4>
+                        <p class="text-gray-500 text-sm mb-6">Menenangkan diri di tengah rimbunnya pohon kota Surabaya. Fokus pada meditasi dan pernapasan.</p>
+                        <button onclick="showJoinEventModal('Sunday Yoga')" class="w-full border border-brand-200 text-wellness-text font-bold py-3 rounded-xl group-hover:bg-brand-50 transition-colors">
+                            Ambil Slot RSVP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="bg-white rounded-[28px] border border-brand-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-52 bg-brand-50 relative overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80" alt="Networking Meetup" class="w-full h-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-brand-500 bg-brand-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Malam Kolaboratif</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Premium Lounge</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-wellness-text mb-2">Wellness Networking</h4>
+                        <p class="text-gray-500 text-sm mb-6">Temui sesama pebisnis, pekerja kreatif, dan jalin kolaborasi profesional.</p>
+                        <button onclick="showJoinEventModal('Wellness Networking')" class="w-full border border-brand-200 text-wellness-text font-bold py-3 rounded-xl group-hover:bg-brand-50 transition-colors">
+                            Ambil Slot RSVP
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- MEMBESHIP / PRICING SECTION (4 TIERS - Free, Essentials, Prime, Elite) -->
+    <section id="pricing" class="py-24 max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-100 px-3.5 py-1.5 rounded-full">Keanggotaan Premium</span>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-wellness-text mt-6 mb-4">Investasikan Pada Diri Anda</h2>
+            <p class="text-gray-500 text-lg">Akses ekosistem digital personal (High-Tech) sekaligus tiket masuk eksklusif ke setiap agenda sosial (High-Touch).</p>
+            
+            <!-- Dynamic Pricing Period Toggle -->
+            <div class="inline-flex items-center gap-2 bg-brand-50 border border-brand-100 p-1.5 rounded-full mt-8">
+                <button id="billing-monthly" onclick="toggleBilling('monthly')" class="px-5 py-2 rounded-full text-xs font-bold transition-all bg-white text-wellness-text shadow-sm">
+                    Bulanan
+                </button>
+                <button id="billing-yearly" onclick="toggleBilling('yearly')" class="px-5 py-2 rounded-full text-xs font-bold transition-all text-gray-500">
+                    Tahunan (Hemat 15%)
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
+            
+            <!-- Tier 1: Free -->
+            <div class="bg-white rounded-[24px] border border-brand-100 p-6 flex flex-col justify-between hover:border-brand-300 transition-all duration-300">
+                <div>
+                    <h4 class="text-sm font-bold text-gray-400 mb-1">Free</h4>
+                    <p class="text-xs text-gray-400 mb-4">Akses dasar untuk mulai perjalanan wellness-mu.</p>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span class="text-2xl font-bold text-wellness-text font-serif">Gratis</span>
+                    </div>
+                    <hr class="border-brand-50 mb-6" />
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Akses menu rekomendasi harian
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Bergabung ke 1 event komunitas/bulan
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Akses artikel edukasi dasar
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Profil member dasar
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="openJoinMembershipModal('Free', 'Gratis')" class="w-full bg-brand-50 text-brand-600 text-xs font-semibold py-3 rounded-xl mt-8 hover:bg-brand-100 transition-colors">
+                    Daftar Sekarang
+                </button>
+            </div>
+
+            <!-- Tier 2: Essentials -->
+            <div class="bg-white rounded-[24px] border border-brand-100 p-6 flex flex-col justify-between hover:border-brand-300 transition-all duration-300">
+                <div>
+                    <h4 class="text-sm font-bold text-gray-500 mb-1">Essentials</h4>
+                    <p class="text-xs text-gray-400 mb-4">Untuk kamu yang serius tentang kesehatan.</p>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span id="price-essentials" class="text-2xl font-bold text-wellness-text font-serif">Rp149.000</span>
+                        <span class="text-[10px] text-gray-400">/bulan</span>
+                    </div>
+                    <hr class="border-brand-50 mb-6" />
+                    <ul class="space-y-3">
+                        <li class="text-xs font-bold text-brand-500 mb-2">Semua fitur Free</li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Kurasi menu pintar unlimited
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Diskon up to 10% di semua vendor partner
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Event komunitas unlimited
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Akses penuh modul edukasi
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Mulai kumpulkan Loyalty Points
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="openJoinMembershipModal('Essentials', 'Rp149.000')" class="w-full bg-brand-50 text-brand-600 text-xs font-semibold py-3 rounded-xl mt-8 hover:bg-brand-100 transition-colors">
+                    Daftar Sekarang
+                </button>
+            </div>
+
+            <!-- Tier 3: Prime (Best Seller) -->
+            <div class="bg-white rounded-[24px] border-2 border-brand-300 p-6 flex flex-col justify-between relative shadow-xl hover:shadow-2xl transition-all duration-300 transform scale-100 lg:scale-105">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-500 text-white text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full">
+                    Rekomendasi Utama
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-bold text-brand-500 mb-1 mt-2">Prime</h4>
+                    <p class="text-xs text-gray-400 mb-4">Pengalaman wellness premium tanpa kompromi.</p>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span id="price-tribe" class="text-3xl font-bold text-wellness-text font-serif">Rp299.000</span>
+                        <span class="text-[10px] text-gray-400">/bulan</span>
+                    </div>
+                    <hr class="border-brand-50 mb-6" />
+                    <ul class="space-y-3">
+                        <li class="text-xs font-bold text-brand-500 mb-2">Semua fitur Essentials</li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            Diskon 15% di semua vendor partner
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            Akses event eksklusif VIP
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            Personalized meal plan mingguan
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            Priority booking events
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            Akses early-bird produk baru
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-700">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i>
+                            2x Loyalty Points multiplier
+                        </li>
+                    </ul>
+                </div>
+                
+                <button onclick="openJoinMembershipModal('Prime', 'Rp299.000')" class="w-full bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold py-3 rounded-xl mt-8 transition-colors shadow-lg shadow-brand-200">
+                    Gabung Komunitas
+                </button>
+            </div>
+
+            <!-- Tier 4: Elite Corporate Plan -->
+            <div class="bg-white rounded-[24px] border border-brand-100 p-6 flex flex-col justify-between hover:border-brand-300 transition-all duration-300">
+                <div>
+                    <h4 class="text-sm font-bold text-gray-500 mb-1">Elite Wellness (B2B)</h4>
+                    <p class="text-xs text-gray-400 mb-4">Paket lengkap korporasi untuk kesehatan dan produktivitas karyawan.</p>
+                    <div class="flex items-baseline gap-1 mb-6">
+                        <span class="text-xl font-bold text-wellness-text font-serif">Hubungi Kami</span>
+                    </div>
+                    <hr class="border-brand-50 mb-6" />
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Seluruh Fitur Vibe-Tribe Member
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Sesi Seminar & Konsultasi Nutrisi Kantor
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Private Event Fun Run untuk Perusahaan Anda
+                        </li>
+                        <li class="flex items-start gap-2.5 text-xs text-gray-600">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5"></i>
+                            Dokumentasi Profesional Eksklusif
+                        </li>
+                    </ul>
+                </div>
+                
+                <button onclick="openJoinMembershipModal('Elite Corporate', 'Custom B2B Price')" class="w-full bg-wellness-text text-white text-xs font-semibold py-3 rounded-xl mt-8 hover:bg-brand-600 transition-colors">
+                    Hubungi Kemitraan
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- INTERACTIVE TESTIMONIALS SLIDER -->
+    <section class="py-24 bg-[#FFF5F6] border-y border-brand-100/40 relative z-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs font-bold text-brand-500 uppercase tracking-widest">Kisah Komunitas</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-wellness-text mt-4">Apa Kata Vibe-Tribe?</h2>
+            </div>
+
+            <!-- Testimonial Slider Wrapper -->
+            <div class="relative max-w-4xl mx-auto">
+                <div class="overflow-hidden">
+                    <div id="testimonial-track" class="flex transition-transform duration-500 ease-out">
+                        
+                        <!-- Testimonial 1 -->
+                        <div class="w-full shrink-0 px-4">
+                            <div class="bg-white rounded-[32px] border border-brand-100 p-8 md:p-12 shadow-sm text-center">
+                                <i data-lucide="quote" class="w-12 h-12 text-brand-200 mx-auto mb-6"></i>
+                                <p class="text-lg md:text-xl text-wellness-text italic leading-relaxed mb-8">
+                                    "Sebagai pekerja profesional di pusat kota Surabaya, mental saya sering terkuras habis. Sejak menggunakan Vivve, menu makan sehat harian saya otomatis terkelola tanpa pusing memilih. Acara lari pagi Sabtu juga mempertemukan saya dengan relasi yang luar biasa!"
+                                </p>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 rounded-full bg-brand-200 border-2 border-white shadow-md flex items-center justify-center font-bold text-brand-600 font-serif text-lg mb-3">RS</div>
+                                    <h5 class="font-bold text-wellness-text">Rian Satria</h5>
+                                    <p class="text-xs text-brand-500">Business Development Specialist</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 2 -->
+                        <div class="w-full shrink-0 px-4">
+                            <div class="bg-white rounded-[32px] border border-brand-100 p-8 md:p-12 shadow-sm text-center">
+                                <i data-lucide="quote" class="w-12 h-12 text-brand-200 mx-auto mb-6"></i>
+                                <p class="text-lg md:text-xl text-wellness-text italic leading-relaxed mb-8">
+                                    "Sebelumnya saya selalu kesulitan menjaga konsistensi olahraga. Di Vivve, adanya konsep High-Touch lewat komunitas aktif membuat saya merasa dipertanggungjawabkan secara sosial dengan cara yang sangat asyik dan prestisius."
+                                </p>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 rounded-full bg-brand-200 border-2 border-white shadow-md flex items-center justify-center font-bold text-brand-600 font-serif text-lg mb-3">MS</div>
+                                    <h5 class="font-bold text-wellness-text">Michael S.</h5>
+                                    <p class="text-xs text-brand-500">Senior Creative Lead</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 3 -->
+                        <div class="w-full shrink-0 px-4">
+                            <div class="bg-white rounded-[32px] border border-brand-100 p-8 md:p-12 shadow-sm text-center">
+                                <i data-lucide="quote" class="w-12 h-12 text-brand-200 mx-auto mb-6"></i>
+                                <p class="text-lg md:text-xl text-wellness-text italic leading-relaxed mb-8">
+                                    "Keuntungan yang sangat terasa adalah potongan harga mitra flat di platform katering andalan dan gym langganan saya. Uang membership terasa kembali berlipat ganda dari penghematan harian ini."
+                                </p>
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 rounded-full bg-brand-200 border-2 border-white shadow-md flex items-center justify-center font-bold text-brand-600 font-serif text-lg mb-3">KD</div>
+                                    <h5 class="font-bold text-wellness-text">Karina Devi</h5>
+                                    <p class="text-xs text-brand-500">Investment Associate</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navigation dots -->
+                <div class="flex justify-center gap-2.5 mt-8">
+                    <button onclick="setTestimonial(0)" class="testimonial-dot w-2.5 h-2.5 rounded-full bg-brand-400 transition-all"></button>
+                    <button onclick="setTestimonial(1)" class="testimonial-dot w-2.5 h-2.5 rounded-full bg-brand-200 transition-all"></button>
+                    <button onclick="setTestimonial(2)" class="testimonial-dot w-2.5 h-2.5 rounded-full bg-brand-200 transition-all"></button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ACCORDION FAQ SECTION -->
+    <section id="faq" class="py-24 max-w-3xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="text-xs font-bold text-brand-500 uppercase tracking-widest bg-brand-100 px-3.5 py-1.5 rounded-full">FAQ</span>
+            <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-wellness-text mt-6">FAQ</h2>
+        </div>
+
+        <div class="bg-white rounded-[32px] border border-brand-200/50 p-6 md:p-8 shadow-sm divide-y divide-brand-100/60">
+            
+            <!-- FAQ 1 -->
+            <div class="faq-item py-6 first:pt-0 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">1. Apa itu Vivve Indonesia?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Vivve Indonesia adalah Social-Wellness Startup yang menyatukan teknologi kesehatan personal berbasis AI (High-Tech) dengan ekosistem aktivitas komunitas nyata (High-Touch). Kami mengurasi asupan harian gizi Anda sekaligus mempertemukan Anda dengan lingkaran sosial yang dinamis dan sehat.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="faq-item py-6 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">2. Apakah Vivve menyediakan meal plan?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Ya. Sistem 'The Brain' kami merancang meal plan yang terintegrasi penuh. Sistem kami memetakan asupan, kalori, and menu gizi Anda secara mingguan dari vendor katering sehat terdekat, membantu meminimalisasi kerumitan merencanakan makanan harian.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item py-6 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">3. Apakah harus ikut event offline?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Tidak wajib, namun sangat direkomendasikan! Sesi 'The Soul' kami seperti Fun Run dan Sunday Yoga dibuat agar hidup sehat menjadi menyenangkan, prestisius, dan sekaligus menjadi wadah yang sempurna untuk networking.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="faq-item py-6 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">4. Apakah Vivve punya komunitas?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Ya, kami memiliki komunitas aktif yang kami sebut dengan "Vibe-Tribe". Ini adalah ekosistem dari kalangan mahasiswa, pekerja kantoran, pengusaha, serta pegiat kebugaran yang berpusat di kota Surabaya dan sekitarnya.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="faq-item py-6 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">5. Apakah data pribadi saya aman?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Keamanan Anda adalah prioritas utama kami. Seluruh data biometrik, profil medis, dan riwayat aktivitas fisik Anda disimpan secara aman dengan enkripsi modern dan hanya digunakan untuk merancang asupan gizi personal Anda.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ 6 -->
+            <div class="faq-item py-6 last:pb-0">
+                <button onclick="toggleFAQ(this)" class="w-full flex justify-between items-center text-left focus:outline-none group">
+                    <span class="font-bold text-base md:text-lg text-wellness-text group-hover:text-brand-500 transition-colors">6. Cara join Vivve bagaimana?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-answer max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-out">
+                    <p class="text-gray-500 text-sm leading-relaxed pt-4">
+                        Caranya sangat mudah! Anda bisa mendaftar gratis melalui halaman ini, mencoba kalkulator AI kami, atau langsung menekan tombol gabung di paket keanggotaan untuk dihubungkan langsung ke Customer Happiness WA kami.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PREMIUM CONTACT & INTEGRATIONS SECTION -->
+    <section class="py-24 bg-[#FFFBFB] border-t border-brand-100/40 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
+            
+            <!-- Contact Info -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+                <span class="text-xs font-bold text-brand-500 uppercase tracking-widest">Hubungi Kami</span>
+                <h3 class="text-3xl md:text-4xl font-bold tracking-tight text-wellness-text leading-snug">
+                    Hubungkan Gaya Hidup Anda Hari Ini
+                </h3>
+                <p class="text-gray-500 leading-relaxed text-sm">
+                    Tim arsitek kami siap membantu mengalibrasi target kebugaran Anda. Jalin kolaborasi langsung melalui kanal WhatsApp atau media sosial kami.
+                </p>
+
+                <div class="flex flex-col gap-4 mt-4">
+                    <a href="https://wa.me/6282221103709" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 transition-colors">
+                        <div class="p-3 bg-brand-50 text-brand-500 rounded-xl">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase block">WhatsApp Consultation</span>
+                            <span class="text-sm font-bold text-wellness-text">0822-2110-3709</span>
+                        </div>
+                    </a>
+
+                    <a href="https://www.instagram.com/vivve.indonesia" target="_blank" class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 transition-colors">
+                        <div class="p-3 bg-brand-50 text-brand-500 rounded-xl">
+                            <i data-lucide="instagram" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase block">Official Instagram</span>
+                            <span class="text-sm font-bold text-wellness-text">@Vivve.Indonesia</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Email & Newsletter Registration Form -->
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-[32px] border border-brand-200/50 p-8 shadow-sm">
+                    <h4 class="text-xl font-bold text-wellness-text mb-2">Berlangganan Newsletter & Edukasi Jurnal</h4>
+                    <p class="text-gray-500 text-sm mb-6">Dapatkan intisari rekomendasi nutrisi berbasis Scopus dan info promo katering langsung ke email Anda.</p>
+                    
+                    <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Lengkap</label>
+                                <input type="text" required placeholder="Nama Anda" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Alamat Email</label>
+                                <input type="email" required placeholder="name@domain.com" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tujuan Utama Sehat Anda</label>
+                            <select class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-gray-600">
+                                <option>Mengurangi Decision Fatigue Makan Siang</option>
+                                <option>Mencari Komunitas Lari / Yoga di Surabaya</option>
+                                <option>Kerjasama Kemitraan (B2B)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-wellness-text hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
+                            Kirim & Berlangganan Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- LUXURY FINAL CTA SECTION -->
+    <section class="py-24 px-6 relative z-10 overflow-hidden">
+        <div class="max-w-5xl mx-auto bg-gradient-to-br from-wellness-text to-brand-950 rounded-[40px] p-8 md:p-20 text-center relative shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-tr from-brand-600/20 to-transparent pointer-events-none"></div>
+            <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-brand-400/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto">
+                <span class="text-xs font-bold text-brand-300 uppercase tracking-widest">Awali Perubahan Sekarang</span>
+                <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-white font-serif mt-6 mb-8 leading-tight">
+                    Gaya hidup tersehat Anda menanti.
+                </h2>
+                <p class="text-gray-300 text-base md:text-lg mb-10 leading-relaxed">
+                    Bergabunglah bersama keluarga besar Vibe-Tribe. Mari kita nikmati setiap kemudahan teknologi cerdas, seraya menguatkan jalinan ikatan emosional sejati.
+                </p>
+                <button onclick="scrollToSection('ai-calibration')" class="bg-brand-400 hover:bg-brand-500 hover:scale-105 text-white font-bold px-10 py-4.5 rounded-full shadow-xl shadow-brand-950/40 transition-all text-sm uppercase tracking-wider">
+                    Dapatkan AI Blueprint Gratis Anda
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLOATING FIXED WHATSAPP CTA -->
+    <div class="fixed bottom-6 left-6 z-40">
+        <a href="https://wa.me/6282221103709?text=Halo%20Vivve%20Indonesia,%20saya%20tertarik%20konsultasi%20wellness%20gratis" target="_blank" class="flex items-center gap-3 bg-white border border-brand-200 px-4 py-3.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-sm font-bold text-wellness-text group">
+            <span class="flex h-3 w-3 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span>Konsultasi WA</span>
+            <div class="bg-emerald-500 text-white p-2 rounded-full">
+                <i data-lucide="phone-call" class="w-4 h-4"></i>
+            </div>
+        </a>
+    </div>
+
+    <!-- RSVP EVENT MODAL (INTEGRATED INTERACTIVE COMPONENT) -->
+    <div id="event-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] max-w-md w-full p-8 border border-brand-100 shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button onclick="hideEventModal()" class="absolute top-6 right-6 text-gray-400 hover:text-wellness-text">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h4 class="text-xl font-bold text-wellness-text mb-2">RSVP Acara Komunitas</h4>
+            <p id="modal-event-subtitle" class="text-sm text-gray-500 mb-6">Lengkapi data Anda untuk mendapatkan barcode akses masuk ke ruang publik event.</p>
+            
+            <form onsubmit="handleModalSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Acara</label>
+                    <input id="modal-event-name" type="text" readonly class="w-full px-4 py-3 rounded-xl bg-brand-50 border border-brand-100 text-sm font-bold text-brand-600 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Anda</label>
+                    <input type="text" required placeholder="Masukkan nama" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nomor HP / WhatsApp</label>
+                    <input type="text" required placeholder="08123456789" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                </div>
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm mt-2">
+                    Klaim Tiket Masuk Eksklusif
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE 2026 CALENDAR MODAL -->
+    <div id="calendar-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] max-w-lg w-full p-8 border border-brand-100 shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button onclick="closeCalendarModal()" class="absolute top-6 right-6 text-gray-400 hover:text-wellness-text">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h4 class="text-2xl font-bold text-wellness-text font-serif mb-2">Kalender Event 2026</h4>
+            <p class="text-sm text-gray-500 mb-6">Pilih bulan dan klik tanggal yang dilingkari untuk melihat detail aktivitas komunitas Vivve.</p>
+            
+            <!-- Month Selector Tabs -->
+            <div class="flex gap-2 border-b border-brand-100 pb-3 mb-6 overflow-x-auto custom-scrollbar">
+                <button onclick="switchCalendarMonth('juni')" id="tab-juni" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-brand-500 text-white shadow-sm">Juni 2026</button>
+                <button onclick="switchCalendarMonth('juli')" id="tab-juli" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-gray-500 hover:bg-brand-50">Juli 2026</button>
+                <button onclick="switchCalendarMonth('agustus')" id="tab-agustus" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-gray-500 hover:bg-brand-50">Agustus 2026</button>
+            </div>
+
+            <!-- Calendar Display Frame -->
+            <div id="calendar-grid-container" class="grid grid-cols-7 gap-2 text-center text-xs font-semibold mb-6">
+                <!-- Days Header -->
+                <div class="text-gray-400 font-bold">Min</div><div class="text-gray-400 font-bold">Sen</div><div class="text-gray-400 font-bold">Sel</div><div class="text-gray-400 font-bold">Rab</div><div class="text-gray-400 font-bold">Kam</div><div class="text-gray-400 font-bold">Jum</div><div class="text-gray-400 font-bold">Sab</div>
+                <!-- Dynamic Dates inject here -->
+            </div>
+
+            <!-- Selected Date Event Detail Card -->
+            <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 flex items-start gap-3">
+                <div class="p-2 bg-white rounded-lg text-brand-500">
+                    <i data-lucide="bell" id="calendar-event-icon" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h5 id="calendar-event-title" class="font-bold text-sm text-wellness-text">Pilih tanggal di atas</h5>
+                    <p id="calendar-event-desc" class="text-xs text-gray-500 mt-1">Kami menyediakan berbagai aktivitas lari pagi, olahraga santai, dan badminton di Surabaya.</p>
+                    <button id="calendar-rsvp-btn" onclick="" class="hidden mt-3 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">RSVP Event Ini</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PILLAR DETAIL MODAL -->
+    <div id="pillar-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] max-w-md w-full p-8 border border-brand-100 shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button onclick="closePillarModal()" class="absolute top-6 right-6 text-gray-400 hover:text-wellness-text">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="w-12 h-12 bg-brand-50 text-brand-500 rounded-xl flex items-center justify-center mb-6">
+                <i id="pillar-modal-icon" data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+            <h4 id="pillar-modal-title" class="text-2xl font-bold text-wellness-text font-serif mb-3">Pilar Detail</h4>
+            <p id="pillar-modal-desc" class="text-sm text-gray-500 leading-relaxed mb-6">Rincian detail aktivitas, menu gizi, dan layanan untuk meningkatkan kenyamanan sehat Anda.</p>
+            
+            <div class="bg-brand-50 rounded-2xl p-4 border border-brand-100 space-y-3 mb-6">
+                <h5 class="text-xs font-bold text-brand-600 uppercase">Fitur & Layanan Utama</h5>
+                <ul id="pillar-modal-list" class="space-y-2 text-xs text-wellness-text">
+                    <!-- Dynamic List -->
+                </ul>
+            </div>
+            <button onclick="scrollToSection('ai-calibration'); closePillarModal()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-3 rounded-xl text-sm transition-colors">
+                Mulai Kalibrasi Sekarang
+            </button>
+        </div>
+    </div>
+
+    <!-- MOCK CHECKOUT OVERLAY / MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] max-w-md w-full p-8 border border-brand-100 shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6 text-gray-400 hover:text-wellness-text">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <h4 class="text-2xl font-bold text-wellness-text font-serif">Detail Checkout Menu</h4>
+                <p class="text-sm text-gray-500">Selesaikan pesanan asupan gizi sehat harian Anda melalui mitra katering Vivve.</p>
+            </div>
+
+            <div class="bg-brand-50 rounded-2xl p-4 border border-brand-100 mb-6 space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-brand-100">
+                    <span class="text-xs font-bold text-gray-500">Item Pesanan</span>
+                    <span id="checkout-food-title" class="text-xs font-bold text-wellness-text">Salmon Mentai Clean Prep</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-gray-500">Kalori Terkalibrasi</span>
+                    <span id="checkout-food-kcal" class="font-semibold text-brand-600">420 Kcal</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-gray-500">Harga Item</span>
+                    <span class="font-semibold text-wellness-text">Rp45.000</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-gray-500">Diskon Member (Prime/Essentials)</span>
+                    <span class="font-semibold text-emerald-500">-Rp6.750</span>
+                </div>
+                <div class="flex justify-between items-center pt-2 border-t border-brand-100">
+                    <span class="text-sm font-bold text-wellness-text">Total Pembayaran</span>
+                    <span class="text-base font-bold text-brand-600">Rp38.250</span>
+                </div>
+            </div>
+
+            <form onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Alamat Pengiriman (Surabaya)</label>
+                    <input type="text" required placeholder="Jl. Tunjungan No. 12, Genteng" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                </div>
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
+                    Bayar & Pesan Sekarang (Via WA)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIGN UP / LOGIN FORM MODAL -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] max-w-sm w-full p-8 border border-brand-100 shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-gray-400 hover:text-wellness-text">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h4 id="auth-modal-title" class="text-2xl font-bold text-wellness-text font-serif mb-2">Daftar Akun Baru</h4>
+            <p id="auth-modal-desc" class="text-sm text-gray-500 mb-6">Mulai pengalaman wellness premium Anda hari ini.</p>
+            
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Email</label>
+                    <input type="email" required placeholder="name@domain.com" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-brand-50/40 border border-brand-100 focus:outline-none focus:border-brand-300 text-sm text-wellness-text">
+                </div>
+                <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl transition-colors text-sm">
+                    Konfirmasi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE JAVASCRIPT & STATE MANAGEMENT -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Cursor glow tracking logic
+        const glowContainer = document.getElementById('glow-container');
+        document.addEventListener('mousemove', (e) => {
+            glowContainer.style.setProperty('--x', e.clientX + 'px');
+            glowContainer.style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // Navigation scroll background modification
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                navbar.classList.add('bg-white/85', 'premium-blur', 'shadow-sm', 'border-brand-100/30', 'py-4');
+                navbar.classList.remove('py-6', 'border-transparent');
+            } else {
+                navbar.classList.remove('bg-white/85', 'premium-blur', 'shadow-sm', 'border-brand-100/30', 'py-4');
+                navbar.classList.add('py-6', 'border-transparent');
+            }
+        });
+
+        // Toggle Profile Dropdown
+        const profileDropdown = document.getElementById('profile-dropdown');
+        function toggleProfileDropdown() {
+            if (profileDropdown.classList.contains('opacity-0')) {
+                profileDropdown.classList.remove('opacity-0', 'pointer-events-none');
+                profileDropdown.classList.add('opacity-100');
+            } else {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none');
+                profileDropdown.classList.remove('opacity-100');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const btn = document.getElementById('profile-menu-btn');
+            if (btn && !btn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        // Scroll helper function
+        function scrollToSection(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Mobile drawer toggles
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileClose = document.getElementById('mobile-close');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+
+        mobileToggle.addEventListener('click', () => {
+            mobileDrawer.classList.remove('opacity-0', 'pointer-events-none');
+            mobileDrawer.querySelector('div').classList.remove('translate-x-full');
+        });
+
+        function closeMobileDrawer() {
+            mobileDrawer.classList.add('opacity-0', 'pointer-events-none');
+            mobileDrawer.querySelector('div').classList.add('translate-x-full');
+        }
+
+        mobileClose.addEventListener('click', closeMobileDrawer);
+        mobileDrawer.addEventListener('click', (e) => {
+            if (e.target === mobileDrawer) closeMobileDrawer();
+        });
+
+        // Mock Foods Array
+        const mockFoods = [
+            { name: "Salmon Mentai Clean Prep", kcal: 420 },
+            { name: "Smashed Avocado Chicken Rice", kcal: 450 },
+            { name: "Tenderloin Beetroot Salad", kcal: 380 },
+            { name: "Tempeh Almond Nut Blend Bowl", kcal: 340 }
+        ];
+
+        // Rekomendasi popover logic
+        const rekomPopover = document.getElementById('rekomendasi-popover');
+        function openRekomendasiPopover() {
+            if (rekomPopover.classList.contains('opacity-0')) {
+                rekomPopover.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                rekomPopover.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function selectRecommendedFood(index) {
+            const food = mockFoods[index];
+            document.getElementById('hero-food-name').innerText = food.name;
+            document.getElementById('hero-food-meta').innerHTML = `
+                <span class="flex items-center gap-1"><i data-lucide="flame" class="w-3.5 h-3.5 text-brand-400"></i> ${food.kcal} Kcal</span>
+                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-400"></i> Surabaya Pusat</span>
+            `;
+            lucide.createIcons();
+            rekomPopover.classList.add('opacity-0', 'pointer-events-none');
+            showToast(`Menu katering diubah ke ${food.name}!`);
+        }
+
+        // Checkout Modal Logic
+        const checkoutModal = document.getElementById('checkout-modal');
+        function openCheckoutModal() {
+            const currentFoodName = document.getElementById('hero-food-name').innerText;
+            const currentKcal = mockFoods.find(f => f.name === currentFoodName)?.kcal || 420;
+            
+            document.getElementById('checkout-food-title').innerText = currentFoodName;
+            document.getElementById('checkout-food-kcal').innerText = `${currentKcal} Kcal`;
+            
+            checkoutModal.classList.remove('opacity-0', 'pointer-events-none');
+            checkoutModal.querySelector('div').classList.remove('scale-95');
+        }
+
+        function closeCheckoutModal() {
+            checkoutModal.classList.add('opacity-0', 'pointer-events-none');
+            checkoutModal.querySelector('div').classList.add('scale-95');
+        }
+
+        function handleCheckoutSubmit(e) {
+            e.preventDefault();
+            const currentFoodName = document.getElementById('checkout-food-title').innerText;
+            closeCheckoutModal();
+            const message = `Halo Vivve Indonesia! Saya ingin memesan menu katering sehat *${currentFoodName}* melalui rekomendasi AI.`;
+            window.open(`https://wa.me/6282221103709?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // Pillar Details Modal Logic
+        const pillarModal = document.getElementById('pillar-modal');
+        const pillarData = {
+            brain: {
+                title: "The Brain (Digital Health)",
+                icon: "cpu",
+                desc: "Sistem cerdas di balik menu harian dan pelacakan nutrisi adaptif Anda.",
+                list: [
+                    "Analisis Kalibrasi AI Biometrik & Gaya Hidup mendalam",
+                    "Rencana katering & porsi nutrisi otomatis setiap hari",
+                    "Database vendor katering lokal Surabaya terkurasi (Scopus-based recipes)",
+                    "Asisten cerdas WhatsApp yang mengingatkan jadwal makan harian"
+                ]
+            },
+            soul: {
+                title: "The Soul (Vibe-Tribe Community)",
+                icon: "heart",
+                desc: "Komunitas nyata yang membuat kebiasaan bugar menjadi prestisius.",
+                list: [
+                    "Acara Saturday Fun Run mingguan di Jalan Tunjungan/Darmo",
+                    "Sunday Yoga di taman terbuka Surabaya untuk meredakan kelelahan mental",
+                    "Wellness Networking eksklusif mempertemukan pebisnis & profesional kreatif",
+                    "Grup pendampingan akuntabilitas sosial di WhatsApp"
+                ]
+            },
+            ecosystem: {
+                title: "The Ecosystem Benefits",
+                icon: "tag",
+                desc: "Kemitraan luas yang menghasilkan penghematan biaya hidup sehat.",
+                list: [
+                    "Diskon flat hingga 15% di 15+ mitra katering Surabaya terpercaya",
+                    "Potongan harga keanggotaan gym premium & studio fitness mitra",
+                    "Loyalty Points yang dapat ditukarkan dengan Merchandise Eksklusif",
+                    "Akses prioritas rsvp tiket acara (Priority Booking)"
+                ]
+            }
+        };
+
+        function openPillarDetail(type) {
+            const data = pillarData[type];
+            document.getElementById('pillar-modal-title').innerText = data.title;
+            document.getElementById('pillar-modal-desc').innerText = data.desc;
+            
+            const iconEl = document.getElementById('pillar-modal-icon');
+            iconEl.setAttribute('data-lucide', data.icon);
+            
+            const listEl = document.getElementById('pillar-modal-list');
+            listEl.innerHTML = data.list.map(item => `
+                <li class="flex items-start gap-2.5">
+                    <i data-lucide="check" class="w-4 h-4 text-brand-400 shrink-0 mt-0.5"></i>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+            
+            lucide.createIcons();
+            pillarModal.classList.remove('opacity-0', 'pointer-events-none');
+            pillarModal.querySelector('div').classList.remove('scale-95');
+        }
+
+        function closePillarModal() {
+            pillarModal.classList.add('opacity-0', 'pointer-events-none');
+            pillarModal.querySelector('div').classList.add('scale-95');
+        }
+
+        // Calendar 2026 Interactive Logic (Mulai Juni 2026)
+        const calendarModal = document.getElementById('calendar-modal');
+        const eventDatabase = {
+            juni: {
+                startDay: 1, // Senin (1 Juni 2026)
+                days: 30,
+                activities: {
+                    6: { title: "Saturday Fun Run", desc: "Lari pagi santai pukul 06:00 di CFD Jl. Tunjungan.", icon: "flag" },
+                    13: { title: "Badminton Match", desc: "Sesi main badminton seru sesama member Vivve pukul 15:00.", icon: "activity" },
+                    14: { title: "Sunday Yoga in the Park", desc: "Meditasi dan rilis stress di Taman Bungkul pukul 07:00.", icon: "sun" },
+                    20: { title: "Saturday Fun Run", desc: "Edisi lari pagi rute tengah kota & sarapan bersama.", icon: "flag" },
+                    24: { title: "Jalan-Jalan Sore", desc: "Aktivitas cardio santai menyusuri kota lama Surabaya.", icon: "smile" },
+                    27: { title: "Wellness Networking Lounge", desc: "Sesi berkumpul malam, diskusi karir & bisnis di Premium Lounge.", icon: "sparkles" }
+                }
+            },
+            juli: {
+                startDay: 3, // Rabu (1 Juli 2026)
+                days: 31,
+                activities: {
+                    4: { title: "Saturday Fun Run", desc: "Lari santai 5K keliling Tunjungan Plaza area.", icon: "flag" },
+                    11: { title: "Badminton Tournament", desc: "Friendly tournament Vivve Cup untuk memperebutkan hadiah merchandise.", icon: "award" },
+                    18: { title: "Wellness Networking", desc: "Membangun relasi bersama pebisnis muda di Surabaya Barat.", icon: "sparkles" },
+                    26: { title: "Sunday Zen Yoga", desc: "Yoga relaksasi outdoor meredakan kelelahan kerja.", icon: "sun" }
+                }
+            },
+            agustus: {
+                startDay: 6, // Sabtu (1 Agustus 2026)
+                days: 31,
+                activities: {
+                    8: { title: "Saturday Fun Run Independence Day", desc: "Lari pagi semarak menyambut hari Kemerdekaan RI.", icon: "flag" },
+                    15: { title: "Jalan-Jalan Sehat", desc: "Aktivitas tracking outdoor bersama komunitas lari.", icon: "map" },
+                    22: { title: "Badminton Match", desc: "Latihan rutin bulanan di hall badminton terdekat.", icon: "activity" },
+                    29: { title: "Wellness Gala Dinner", desc: "Networking formal di akhir bulan bersama mitra gizi.", icon: "award" }
+                }
+            }
+        };
+
+        let activeCalendarMonth = 'juni';
+        function openCalendarModal() {
+            calendarModal.classList.remove('opacity-0', 'pointer-events-none');
+            calendarModal.querySelector('div').classList.remove('scale-95');
+            renderCalendar();
+        }
+
+        function closeCalendarModal() {
+            calendarModal.classList.add('opacity-0', 'pointer-events-none');
+            calendarModal.querySelector('div').classList.add('scale-95');
+        }
+
+        function switchCalendarMonth(month) {
+            activeCalendarMonth = month;
+            ['juni', 'juli', 'agustus'].forEach(m => {
+                const btn = document.getElementById(`tab-${m}`);
+                if (m === month) {
+                    btn.className = "px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-brand-500 text-white shadow-sm";
+                } else {
+                    btn.className = "px-4 py-1.5 rounded-full text-xs font-bold transition-all text-gray-500 hover:bg-brand-50";
+                }
+            });
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const monthInfo = eventDatabase[activeCalendarMonth];
+            const container = document.getElementById('calendar-grid-container');
+            
+            // Clear previous dates (keep headers)
+            const headersHTML = `
+                <div class="text-gray-400 font-bold text-center">Min</div><div class="text-gray-400 font-bold text-center">Sen</div><div class="text-gray-400 font-bold text-center">Sel</div><div class="text-gray-400 font-bold text-center">Rab</div><div class="text-gray-400 font-bold text-center">Kam</div><div class="text-gray-400 font-bold text-center">Jum</div><div class="text-gray-400 font-bold text-center">Sab</div>
+            `;
+            container.innerHTML = headersHTML;
+            
+            // Empty cells for alignment
+            for (let i = 0; i < monthInfo.startDay; i++) {
+                const empty = document.createElement('div');
+                container.appendChild(empty);
+            }
+            
+            // Build dates
+            for (let date = 1; date <= monthInfo.days; date++) {
+                const dateBtn = document.createElement('button');
+                dateBtn.className = "p-2.5 hover:bg-brand-50 rounded-xl transition-all font-bold flex flex-col items-center justify-center relative";
+                dateBtn.innerText = date;
+                
+                // Highlight active event dates
+                if (monthInfo.activities[date]) {
+                    dateBtn.className += " border border-brand-400 text-brand-600 bg-brand-50/50";
+                    const activeDot = document.createElement('span');
+                    activeDot.className = "absolute bottom-1 w-1.5 h-1.5 rounded-full bg-brand-500";
+                    dateBtn.appendChild(activeDot);
+                    
+                    dateBtn.onclick = () => selectCalendarDate(date, monthInfo.activities[date]);
+                } else {
+                    dateBtn.className += " text-gray-700";
+                    dateBtn.onclick = () => selectCalendarDate(date, null);
+                }
+                
+                container.appendChild(dateBtn);
+            }
+        }
+
+        function selectCalendarDate(date, eventDetails) {
+            const titleEl = document.getElementById('calendar-event-title');
+            const descEl = document.getElementById('calendar-event-desc');
+            const rsvpBtn = document.getElementById('calendar-rsvp-btn');
+            const iconEl = document.getElementById('calendar-event-icon');
+
+            if (eventDetails) {
+                titleEl.innerText = `${date} ${activeCalendarMonth.charAt(0).toUpperCase() + activeCalendarMonth.slice(1)} 2026: ${eventDetails.title}`;
+                descEl.innerText = eventDetails.desc;
+                rsvpBtn.classList.remove('hidden');
+                rsvpBtn.onclick = () => {
+                    closeCalendarModal();
+                    showJoinEventModal(eventDetails.title);
+                };
+                iconEl.setAttribute('data-lucide', eventDetails.icon);
+            } else {
+                titleEl.innerText = `${date} ${activeCalendarMonth.charAt(0).toUpperCase() + activeCalendarMonth.slice(1)} 2026: Tidak Ada Jadwal Resmi`;
+                descEl.innerText = "Tidak ada event publik skala besar pada tanggal ini. Tetap jaga asupan nutrisi Anda via digital assistant kami.";
+                rsvpBtn.classList.add('hidden');
+                iconEl.setAttribute('data-lucide', "calendar-off");
+            }
+            lucide.createIcons();
+        }
+
+        // Dynamic pricing model logic
+        let currentBilling = 'monthly';
+        const priceTribe = document.getElementById('price-tribe');
+        const priceEssentials = document.getElementById('price-essentials');
+        
+        function toggleBilling(period) {
+            currentBilling = period;
+            const btnMonthly = document.getElementById('billing-monthly');
+            const btnYearly = document.getElementById('billing-yearly');
+            
+            if (period === 'monthly') {
+                btnMonthly.classList.add('bg-white', 'text-wellness-text', 'shadow-sm');
+                btnMonthly.classList.remove('text-gray-500');
+                btnYearly.classList.remove('bg-white', 'text-wellness-text', 'shadow-sm');
+                btnYearly.classList.add('text-gray-500');
+                priceTribe.innerHTML = "Rp299.000";
+                priceEssentials.innerHTML = "Rp149.000";
+            } else {
+                btnYearly.classList.add('bg-white', 'text-wellness-text', 'shadow-sm');
+                btnYearly.classList.remove('text-gray-500');
+                btnMonthly.classList.remove('bg-white', 'text-wellness-text', 'shadow-sm');
+                btnMonthly.classList.add('text-gray-500');
+                priceTribe.innerHTML = "Rp254.000";
+                priceEssentials.innerHTML = "Rp126.000";
+            }
+            showToast(`Billing period diubah ke ${period}!`);
+        }
+
+        // Joint Membership Action
+        function openJoinMembershipModal(planName, priceText) {
+            const msg = `Halo Vivve Indonesia! Saya berminat untuk bergabung dengan Keanggotaan *${planName}* (${priceText}) yang saya temukan di website.`;
+            window.open(`https://wa.me/6282221103709?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // Testimonial slider logic
+        const track = document.getElementById('testimonial-track');
+        const dots = document.querySelectorAll('.testimonial-dot');
+        function setTestimonial(index) {
+            track.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, idx) => {
+                if (idx === index) {
+                    dot.classList.add('bg-brand-400');
+                    dot.classList.remove('bg-brand-200');
+                } else {
+                    dot.classList.remove('bg-brand-400');
+                    dot.classList.add('bg-brand-200');
+                }
+            });
+        }
+
+        // Accordion FAQ toggle
+        function toggleFAQ(element) {
+            const container = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            
+            if (container.style.maxHeight === '0px' || !container.style.maxHeight) {
+                container.style.maxHeight = container.scrollHeight + 'px';
+                container.style.opacity = '1';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                container.style.maxHeight = '0px';
+                container.style.opacity = '0';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // WhatsApp direct link generator
+        function openConsultation(tier = "") {
+            let message = "Halo Vivve Indonesia! Saya berminat konsultasi wellness gratis.";
+            if (tier) {
+                message = `Halo Vivve Indonesia! Saya ingin mendaftar keanggotaan paket *${tier}*.`;
+            }
+            window.open(`https://wa.me/6282221103709?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // Custom Toast Notification trigger
+        function showToast(message) {
+            const toast = document.getElementById('toast-box');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // RSVP Modal controllers
+        const eventModal = document.getElementById('event-modal');
+        function showJoinEventModal(eventName = "Wellness Event") {
+            document.getElementById('modal-event-name').value = eventName;
+            eventModal.classList.remove('opacity-0', 'pointer-events-none');
+            eventModal.querySelector('div').classList.remove('scale-95');
+        }
+        function hideEventModal() {
+            eventModal.classList.add('opacity-0', 'pointer-events-none');
+            eventModal.querySelector('div').classList.add('scale-95');
+        }
+        function handleModalSubmit(e) {
+            e.preventDefault();
+            hideEventModal();
+            showToast('Pendaftaran RSVP Berhasil! Kami kirim barcode akses via WA.');
+        }
+
+        // Auth Modal (Login/Signup Profile) Logic
+        const authModal = document.getElementById('auth-modal');
+        function showAuthModal(type) {
+            const title = document.getElementById('auth-modal-title');
+            const desc = document.getElementById('auth-modal-desc');
+            
+            if (type === 'login') {
+                title.innerText = "Masuk ke Vivve";
+                desc.innerText = "Kembali akses AI Nutritionist & Vibe-Tribe dashboard Anda.";
+            } else {
+                title.innerText = "Daftar Akun Baru";
+                desc.innerText = "Dapatkan free 1 bulan trial akses meal plan terbatas.";
+            }
+            
+            authModal.classList.remove('opacity-0', 'pointer-events-none');
+            authModal.querySelector('div').classList.remove('scale-95');
+        }
+
+        function closeAuthModal() {
+            authModal.classList.add('opacity-0', 'pointer-events-none');
+            authModal.querySelector('div').classList.add('scale-95');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            closeAuthModal();
+            showToast("Sukses masuk! Selamat datang di ekosistem premium Vivve.");
+        }
+
+        // NEW MULTI-STEP SURVEY SYSTEM STATE
+        let activeSurveyStep = 1;
+        const totalSurveySteps = 11;
+
+        function navigateSurvey(direction) {
+            // Validations for going forward
+            if (direction === 1) {
+                if (activeSurveyStep === 1) {
+                    if (!document.getElementById('sv-fullname').value || !document.getElementById('sv-nickname').value || !document.getElementById('sv-age').value || !document.getElementById('sv-city').value) {
+                        showToast('Harap lengkapi semua data profil dasar!');
+                        return;
+                    }
+                }
+                if (activeSurveyStep === 2) {
+                    const checkedGoals = document.querySelectorAll('input[name="goals"]:checked');
+                    if (checkedGoals.length === 0) {
+                        showToast('Pilih minimal 1 tujuan kesehatan!');
+                        return;
+                    }
+                    if (checkedGoals.length > 3) {
+                        showToast('Maksimal pilih 3 tujuan kesehatan!');
+                        return;
+                    }
+                }
+                if (activeSurveyStep === 11) {
+                    if (!document.getElementById('sv-essay-reason').value || !document.getElementById('sv-essay-help').value || !document.getElementById('sv-essay-expect').value) {
+                        showToast('Harap lengkapi pertanyaan esai!');
+                        return;
+                    }
+                }
+            }
+
+            // Hide Current Step
+            document.getElementById(`step-sec-${activeSurveyStep}`).classList.add('hidden');
+            activeSurveyStep += direction;
+
+            // Show New Step
+            document.getElementById(`step-sec-${activeSurveyStep}`).classList.remove('hidden');
+
+            // Progress Bar Update
+            const progPercent = (activeSurveyStep / totalSurveySteps) * 100;
+            document.getElementById('survey-progress-bar').style.width = `${progPercent}%`;
+
+            // Indicator Update
+            const stepTitles = [
+                "Profil Dasar", "Tujuan Kesehatan", "Pola Hidup Harian", "Pemetaan Nutrisi & Preferensi",
+                "Keseimbangan Mental & Burnout", "Interaksi Sosial & Komunitas", "Work-Life Balance & Produktivitas",
+                "Kebiasaan Digital", "Preferensi Keanggotaan", "Kalibrasi Core AI", "Evaluasi Essay Akhir"
+            ];
+            document.getElementById('survey-step-indicator').innerText = `Bagian ${activeSurveyStep} dari 11: ${stepTitles[activeSurveyStep - 1]}`;
+
+            // Buttons visibility
+            const prevBtn = document.getElementById('survey-prev-btn');
+            const fontNextBtn = document.getElementById('survey-next-btn');
+            const submitBtn = document.getElementById('survey-submit-btn');
+
+            if (activeSurveyStep > 1) {
+                prevBtn.classList.remove('invisible');
+            } else {
+                prevBtn.classList.add('invisible');
+            }
+
+            if (activeSurveyStep === totalSurveySteps) {
+                fontNextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                fontNextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+        }
+
+        // GENERATE DYNAMIC SURVEY OUTPUTS
+        function generateAIResults(e) {
+            e.preventDefault();
+
+            // Hide form and buttons
+            document.getElementById('wellness-survey-form').classList.add('hidden');
+            document.getElementById('survey-prev-btn').classList.add('hidden');
+            document.getElementById('survey-submit-btn').classList.add('hidden');
+            document.getElementById('survey-form-loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('survey-form-loading').classList.add('hidden');
+                document.getElementById('survey-form-results').classList.remove('hidden');
+                
+                // Read Survey Inputs
+                const name = document.getElementById('sv-nickname').value || "Sobat Sehat";
+                const age = parseInt(document.getElementById('sv-age').value) || 25;
+                const status = document.getElementById('sv-status').value;
+                const activityType = document.getElementById('sv-physical-activity').value;
+                const favSport = document.getElementById('sv-sports-fav').value;
+                const foodPref = document.getElementById('sv-food-preference').value;
+                const dailyBudget = document.getElementById('sv-daily-budget').value;
+                const stressLevel = parseInt(document.getElementById('sat-stress').value) || 5;
+
+                // Determine Persona
+                let persona = "Active & Social";
+                if (status === "Pekerja" || status === "Entrepreneur") {
+                    persona = "High-Productive Urban Professional";
+                } else if (status === "Mahasiswa") {
+                    persona = "Dynamic Balance Academic";
+                }
+
+                // Determine Nutrition Mapping
+                let calories = "2050 Kcal";
+                let protein = "110g Protein";
+                if (foodPref === "High Protein") {
+                    calories = "2250 Kcal";
+                    protein = "135g Protein";
+                } else if (foodPref === "Low Carb") {
+                    calories = "1800 Kcal";
+                    protein = "115g Protein";
+                }
+
+                // Burnout Risk based on Stress & Overthinking scales
+                let burnout = "Kategori Rendah (Seimbang)";
+                if (stressLevel >= 7) {
+                    burnout = "Kategori Tinggi (Memerlukan Relaksasi Segera)";
+                } else if (stressLevel >= 5) {
+                    burnout = "Kategori Sedang (Butuh Manajemen Keseimbangan)";
+                }
+
+                // Match Community Activity
+                let matchedCommunity = "Saturday Fun Run";
+                if (favSport === "Yoga" || stressLevel >= 7) {
+                    matchedCommunity = "Sunday Yoga in the Park";
+                } else if (favSport === "Badminton") {
+                    matchedCommunity = "Badminton Match Session";
+                }
+
+                // Event Recommendation Detail
+                let eventRec = "Saturday Fun Run di Tunjungan Surabaya";
+                if (matchedCommunity === "Sunday Yoga in the Park") {
+                    eventRec = "Sunday Zen Yoga & Meditasi Sesi di Taman Kota";
+                }
+
+                // Recommended Meal Mapping
+                let foodRec = "Organic Salmon herbs & Quinoa Bowl";
+                if (foodPref === "Low Carb") {
+                    foodRec = "Tenderloin Clean Salad & Avocado Slices";
+                } else if (foodPref === "High Protein") {
+                    foodRec = "Chicken Breast Brown Rice & Steamed Egg";
+                }
+
+                // Set HTML results
+                document.getElementById('res-sv-persona').innerText = `${name} — ${persona}`;
+                document.getElementById('res-sv-nutrition').innerText = `${calories} (${protein}, Clean Prep)`;
+                document.getElementById('res-sv-energy').innerText = `${(11 - stressLevel).toFixed(1)} / 10`;
+                document.getElementById('res-sv-burnout').innerText = burnout;
+                document.getElementById('res-sv-burnout').className = stressLevel >= 7 ? "text-sm font-bold text-red-500" : "text-sm font-bold text-emerald-500";
+                document.getElementById('res-sv-compat').innerText = `${90 + (10 - stressLevel)}%`;
+                document.getElementById('res-sv-community').innerText = matchedCommunity;
+                document.getElementById('res-sv-recommendation').innerText = `Kurangi durasi begadang, target minum air harian 3 Liter.`;
+                document.getElementById('res-sv-routine').innerText = `Latihan fisik 30 menit setiap pagi sebelum bekerja harian.`;
+                document.getElementById('res-sv-event-rec').innerText = eventRec;
+                document.getElementById('res-sv-food-rec').innerText = foodRec;
+                document.getElementById('res-sv-habit').innerText = `Mengurangi fastfood secara terstruktur`;
+                document.getElementById('res-sv-weekly').innerText = `Senin-Rabu (Pola makan bersih), Sabtu (Fun Run), Minggu (Istirahat & Meditasi)`;
+
+                showToast('AI Blueprint sukses dihitung untuk profil Anda!');
+            }, 1800);
+        }
+
+        function resetSurveyForm() {
+            document.getElementById('wellness-survey-form').reset();
+            document.getElementById('survey-form-results').classList.add('hidden');
+            document.getElementById('wellness-survey-form').classList.remove('hidden');
+            
+            // Back to Step 1
+            document.getElementById(`step-sec-${activeSurveyStep}`).classList.add('hidden');
+            activeSurveyStep = 1;
+            document.getElementById('step-sec-1').classList.remove('hidden');
+            
+            // Reset Progress Indicators
+            document.getElementById('survey-progress-bar').style.width = '9%';
+            document.getElementById('survey-step-indicator').innerText = "Bagian 1 dari 11: Profil Dasar";
+
+            document.getElementById('survey-prev-btn').classList.add('invisible');
+            document.getElementById('survey-prev-btn').classList.remove('hidden');
+            document.getElementById('survey-next-btn').classList.remove('hidden');
+            document.getElementById('survey-submit-btn').classList.add('hidden');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            showToast('Berhasil terdaftar ke newsletter ilmiah Vivve!');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
